@@ -1,0 +1,22 @@
+name: Flask API CI
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build Docker image
+        run: docker build -t flask-api .
+
+      - name: Run container
+        run: docker run -d -p 5000:5000 --name flask-api flask-api
+
+      - name: Test health endpoint
+        run: |
+          sleep 3
+          curl -f http://localhost:5000/health | grep healthy
